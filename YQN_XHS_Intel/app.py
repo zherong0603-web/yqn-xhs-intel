@@ -34,7 +34,7 @@ CONFIG_PATH = DATA_DIR / "config.json"
 DB_PATH = DATA_DIR / "state.db"
 DEFAULT_API_BASE = "https://api.tikhub.io"
 DEFAULT_TEST_MAX_CALLS = 30
-DEFAULT_MAX_COST = 0.30
+DEFAULT_MAX_COST = 0.05
 
 
 ENDPOINTS: dict[str, dict[str, Any]] = {

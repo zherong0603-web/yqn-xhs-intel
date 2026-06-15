@@ -36,7 +36,7 @@ function payload() {
     keyword: $("keyword").value.trim() || "墨西哥海外仓",
     quantity: Number($("quantity").value || 3),
     maxCalls: Number($("maxCalls").value || 30),
-    maxCost: Number($("maxCost").value || 0.3),
+    maxCost: Number($("maxCost").value || 0.05),
     testMode: $("testMode").checked,
     apiBase: $("apiBase").value || "https://api.tikhub.io",
   };
@@ -68,6 +68,7 @@ function renderEstimate(estimate) {
     .join("");
   $("estimateBox").innerHTML = `
     <strong>${estimate.taskName}</strong>
+    <div class="notice-text">这不是马上扣钱，只是先告诉你：如果点击确认运行，大概要按下面这些 API 按钮。</div>
     <ul class="estimate-list">${items}</ul>
     ${limits}
     <div class="notice-text">${estimate.priceMessage}</div>

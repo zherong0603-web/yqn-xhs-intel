@@ -13,22 +13,65 @@
         <span class="brand-mark">YQN</span>
         <span>小红书市场情报助手</span>
       </div>
+      <div class="nav-links" aria-label="页面导航">
+        <a href="#flow">流程</a>
+        <a href="#workbench">工作台</a>
+        <a href="#cost">费用</a>
+      </div>
       <button class="nav-button" data-open-settings type="button"><span class="button-icon key-icon"></span>API Key</button>
     </div>
   </nav>
 
   <main class="page-shell">
     <section class="hero-panel">
-      <p class="eyebrow">TikHub Xiaohongshu App V2 · 本地安全版</p>
-      <h1>把小红书市场调研，变成几个中文按钮。</h1>
-      <p class="hero-copy">先查单价，再估费用，再确认运行。API Key、缓存、原始数据和 Excel 都只放在你的电脑里。</p>
+      <div class="hero-copy-block">
+        <p class="hero-badge"><span></span> Xiaohongshu App V2 · TikHub 本地安全版</p>
+        <h1>小红书数据情报，为 YQN 市场判断而生。</h1>
+        <p class="hero-copy">你只填关键词、数量和预算。程序负责选接口、查单价、算费用、抓数据、去重、保存原始数据，最后给你 Excel。</p>
+        <div class="hero-actions">
+          <button class="hero-primary" data-open-settings type="button">填写 API Key <span>→</span></button>
+          <a class="hero-secondary" href="#workbench">开始测试 <span>→</span></a>
+        </div>
+        <div class="hero-metrics" aria-label="能力概览">
+          <span>20 个 App V2 接口</span>
+          <span>先估费再运行</span>
+          <span>本地保存 Key</span>
+          <span>Excel 自动导出</span>
+        </div>
+      </div>
+      <div class="hero-preview" aria-label="工作台预览">
+        <div class="preview-top">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="preview-card strong">
+          <small>当前任务</small>
+          <strong>市场素材搜索</strong>
+          <p>关键词：墨西哥海外仓</p>
+        </div>
+        <div class="preview-grid">
+          <div>
+            <small>预计调用</small>
+            <strong>4</strong>
+          </div>
+          <div>
+            <small>预计费用</small>
+            <strong>$0.04</strong>
+          </div>
+        </div>
+        <div class="preview-card">
+          <small>输出</small>
+          <p>笔记素材 · 评论需求 · API调用与费用记录</p>
+        </div>
+      </div>
     </section>
 
-    <section class="connect-panel">
+    <section class="connect-panel" id="flow">
       <div class="section-head">
         <div>
-          <p class="eyebrow">真实连接</p>
-          <h2>照着 4 步走，就能真实测试</h2>
+          <p class="eyebrow">真实 API 流程</p>
+          <h2>照着这 5 步走，第一次真实测试不会乱花钱</h2>
         </div>
         <button class="secondary-button" data-open-settings type="button"><span class="button-icon key-icon"></span>填写 API Key</button>
       </div>
@@ -50,26 +93,33 @@
         <li>
           <span>3</span>
           <div>
-            <strong>先点“测试连接”，再点“先估算费用”</strong>
-            <p>连接成功后，工具会实时查接口单价，算出这次最多花多少钱。</p>
+            <strong>点“测试连接”，确认钥匙能用</strong>
+            <p>只检查 Key，不会开始抓小红书数据。</p>
           </div>
         </li>
         <li>
           <span>4</span>
           <div>
-            <strong>最后点“确认运行”</strong>
-            <p>第一轮建议：关键词“墨西哥海外仓”，数量 3，最高费用 $0.05。</p>
+            <strong>填关键词和安全上限，先估算费用</strong>
+            <p>看到预计调用次数和预计费用，再决定要不要跑。</p>
+          </div>
+        </li>
+        <li>
+          <span>5</span>
+          <div>
+            <strong>点“确认运行”，等待 Excel</strong>
+            <p>第一轮建议：关键词“墨西哥海外仓”，结果数量 3，最高费用 $0.05。</p>
           </div>
         </li>
       </ol>
     </section>
 
-    <section class="workspace-grid">
+    <section class="workspace-grid" id="workbench">
       <section class="control-panel">
         <div class="section-head compact">
           <div>
             <p class="eyebrow">任务设置</p>
-            <h2>今天要研究什么</h2>
+            <h2>选任务，填关键词</h2>
           </div>
         </div>
 
@@ -77,19 +127,38 @@
           <label>
             <span>关键词</span>
             <input id="keyword" type="text" value="墨西哥海外仓" autocomplete="off">
+            <small>你想研究的词，比如“墨西哥海外仓”。</small>
           </label>
           <label>
-            <span>获取数量</span>
+            <span>想要结果数量</span>
             <input id="quantity" type="number" min="1" max="500" value="3">
+            <small>你想拿几条结果，比如 3 篇笔记。</small>
           </label>
           <label>
-            <span>最大调用次数</span>
+            <span>安全上限：最多调用</span>
             <input id="maxCalls" type="number" min="1" value="30">
+            <small>像保险丝，API 最多被按几次。</small>
           </label>
           <label>
-            <span>最高费用（美元）</span>
-            <input id="maxCost" type="number" min="0" step="0.01" value="0.30">
+            <span>安全上限：最多花费</span>
+            <input id="maxCost" type="number" min="0" step="0.01" value="0.05">
+            <small>像钱包刹车，超过就自动停。</small>
           </label>
+        </div>
+
+        <div class="concept-grid" aria-label="字段解释">
+          <div>
+            <strong>想要结果数量</strong>
+            <p>你要几条“成品结果”。填 3，就是最多要 3 篇笔记或 3 个账号。</p>
+          </div>
+          <div>
+            <strong>最多调用</strong>
+            <p>程序问 TikHub 一次就算 1 次调用。搜 1 次、查 3 篇详情，大概就是 4 次。</p>
+          </div>
+          <div>
+            <strong>最多花费</strong>
+            <p>本次最多允许花多少钱。比如填 0.05，就是超过 5 美分马上停。</p>
+          </div>
         </div>
 
         <div class="switch-row">
@@ -119,11 +188,11 @@
         </div>
       </section>
 
-      <aside class="status-panel">
+      <aside class="status-panel" id="cost">
         <div class="section-head compact">
           <div>
             <p class="eyebrow">费用保护</p>
-            <h2>确认前先看清楚</h2>
+            <h2>先看钱，再运行</h2>
           </div>
         </div>
 
@@ -146,6 +215,10 @@
           </div>
         </div>
         <div class="notice" id="keyStatus">正在检查 API Key...</div>
+        <div class="plain-explain">
+          <strong>第一轮推荐设置</strong>
+          <p>关键词：墨西哥海外仓；想要结果数量：3；最多调用：30；最多花费：0.05。</p>
+        </div>
         <div class="estimate-box" id="estimateBox"></div>
         <div class="output-box" id="outputBox"></div>
       </aside>
