@@ -421,6 +421,45 @@ def endpoint_price_map(api_base: str) -> tuple[dict[str, float], str]:
         return prices, f"实时查价失败，暂用本地保守单价：{exc}"
 
 
+def check_tikhub_connection(api_key: str, api_base: str) -> dict[str, Any]:
+    api_key = api_key.strip()
+    if not api_key:
+        return {"ok": False, "message": "还没有填写 API Key。"}
+    url = api_base.rstrip("/") + "/api/v1/tikhub/user/get_user_info"
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Accept": "application/json",
+            "Authorization": f"Bearer {api_key}",
+            "User-Agent": "YQN-XHS-Intel/0.1",
+        },
+    )
+    try:
+        with urlopen_with_system_certs(req, timeout=20) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+        if payload.get("code") == 200:
+            return {
+                "ok": True,
+                "message": "连接成功：这个 API Key 可以访问 TikHub。",
+                "data": payload.get("data", {}),
+            }
+        return {
+            "ok": False,
+            "message": payload.get("message_zh") or payload.get("message") or "TikHub 返回了异常，请检查 API Key。",
+            "data": payload,
+        }
+    except urllib.error.HTTPError as exc:
+        try:
+            err_body = exc.read().decode("utf-8")
+            err_payload = json.loads(err_body)
+            message = err_payload.get("detail", {}).get("message_zh") or err_payload.get("message_zh") or err_payload.get("message")
+        except Exception:  # noqa: BLE001
+            message = str(exc)
+        return {"ok": False, "message": message or f"连接失败：HTTP {exc.code}"}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "message": f"连接失败：{exc}"}
+
+
 def urlopen_with_system_certs(req: urllib.request.Request, timeout: int):
     contexts: list[ssl.SSLContext | None] = [None]
     for cert_path in [
@@ -1629,6 +1668,13 @@ class YqnHandler(BaseHTTPRequestHandler):
                         "apiBase": config.get("api_base"),
                     },
                 )
+                return
+            if path == "/api/check-connection":
+                config = load_config()
+                api_key = str(payload.get("apiKey") or config.get("api_key", "")).strip()
+                api_base = str(payload.get("apiBase") or config.get("api_base") or DEFAULT_API_BASE).strip()
+                result = check_tikhub_connection(api_key, api_base)
+                json_response(self, result, 200 if result.get("ok") else 400)
                 return
             if path == "/api/estimate":
                 json_response(self, {"ok": True, "estimate": estimate_task(payload)})

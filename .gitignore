@@ -4,9 +4,9 @@ YQN_XHS_Intel/data/state.db
 YQN_XHS_Intel/data/state.db-*
 YQN_XHS_Intel/data/raw/*
 YQN_XHS_Intel/data/logs/*
+YQN_XHS_Intel/outputs/*.xlsx
 YQN_XHS_Intel/__pycache__/
 YQN_XHS_Intel/static/__pycache__/
 
 # macOS
 .DS_Store
-

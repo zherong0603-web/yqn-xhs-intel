@@ -7,89 +7,156 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <div>
-      <div class="brand-mark">YQN</div>
-      <h1>小红书市场情报助手</h1>
+  <nav class="global-nav">
+    <div class="nav-inner">
+      <div class="brand-lockup">
+        <span class="brand-mark">YQN</span>
+        <span>小红书市场情报助手</span>
+      </div>
+      <button class="nav-button" data-open-settings type="button"><span class="button-icon key-icon"></span>API Key</button>
     </div>
-    <button class="ghost-button" id="settingsButton" type="button"><span class="button-icon key-icon"></span>设置 API Key</button>
-  </header>
+  </nav>
 
-  <main class="layout">
-    <section class="control-panel">
-      <div class="field-grid">
-        <label>
-          <span>关键词</span>
-          <input id="keyword" type="text" value="墨西哥海外仓" autocomplete="off">
-        </label>
-        <label>
-          <span>获取数量</span>
-          <input id="quantity" type="number" min="1" max="500" value="3">
-        </label>
-        <label>
-          <span>最大调用次数</span>
-          <input id="maxCalls" type="number" min="1" value="30">
-        </label>
-        <label>
-          <span>最高费用（美元）</span>
-          <input id="maxCost" type="number" min="0" step="0.01" value="0.30">
-        </label>
-      </div>
-
-      <div class="switch-row">
-        <label class="switch">
-          <input id="testMode" type="checkbox" checked>
-          <span></span>
-        </label>
-        <div>
-          <strong>测试模式</strong>
-          <p>默认最多 30 次调用。</p>
-        </div>
-      </div>
-
-      <div class="task-grid" id="taskGrid">
-        <button class="task-button active" data-task="material" type="button"><span class="button-icon search-icon"></span>市场素材搜索</button>
-        <button class="task-button" data-task="competitor" type="button"><span class="button-icon user-icon"></span>竞品账号研究</button>
-        <button class="task-button" data-task="comments" type="button"><span class="button-icon chat-icon"></span>评论需求分析</button>
-        <button class="task-button" data-task="topic" type="button"><span class="button-icon trend-icon"></span>话题趋势研究</button>
-        <button class="task-button" data-task="product" type="button"><span class="button-icon product-icon"></span>商品与用户痛点研究</button>
-        <button class="task-button" data-task="images" type="button"><span class="button-icon image-icon"></span>图片补充搜索</button>
-        <button class="task-button" data-task="groups" type="button"><span class="button-icon group-icon"></span>群聊搜索</button>
-      </div>
-
-      <div class="action-row">
-        <button class="primary-button" id="estimateButton" type="button"><span class="button-icon calc-icon"></span>先估算费用</button>
-        <button class="confirm-button" id="runButton" type="button" disabled><span class="button-icon play-icon"></span>确认运行</button>
-      </div>
+  <main class="page-shell">
+    <section class="hero-panel">
+      <p class="eyebrow">TikHub Xiaohongshu App V2 · 本地安全版</p>
+      <h1>把小红书市场调研，变成几个中文按钮。</h1>
+      <p class="hero-copy">先查单价，再估费用，再确认运行。API Key、缓存、原始数据和 Excel 都只放在你的电脑里。</p>
     </section>
 
-    <aside class="status-panel">
-      <div class="stat-grid">
+    <section class="connect-panel">
+      <div class="section-head">
         <div>
-          <span>预计调用</span>
-          <strong id="plannedCalls">-</strong>
+          <p class="eyebrow">真实连接</p>
+          <h2>照着 4 步走，就能真实测试</h2>
         </div>
-        <div>
-          <span>预计费用</span>
-          <strong id="plannedCost">-</strong>
-        </div>
-        <div>
-          <span>本次调用</span>
-          <strong id="actualCalls">-</strong>
-        </div>
-        <div>
-          <span>本次花费</span>
-          <strong id="actualCost">-</strong>
-        </div>
+        <button class="secondary-button" data-open-settings type="button"><span class="button-icon key-icon"></span>填写 API Key</button>
       </div>
-      <div class="notice" id="keyStatus">正在检查 API Key...</div>
-      <div class="estimate-box" id="estimateBox"></div>
-      <div class="output-box" id="outputBox"></div>
-    </aside>
+      <ol class="step-list">
+        <li>
+          <span>1</span>
+          <div>
+            <strong>去 TikHub 用户中心复制 API Key</strong>
+            <p>它像门钥匙。没有钥匙时，本工具只会跑演示数据，不会扣费。</p>
+          </div>
+        </li>
+        <li>
+          <span>2</span>
+          <div>
+            <strong>点右上角 API Key，粘贴并保存到本机</strong>
+            <p>保存位置在本机 `data/config.json`，不会写进代码，也不会上传 GitHub。</p>
+          </div>
+        </li>
+        <li>
+          <span>3</span>
+          <div>
+            <strong>先点“测试连接”，再点“先估算费用”</strong>
+            <p>连接成功后，工具会实时查接口单价，算出这次最多花多少钱。</p>
+          </div>
+        </li>
+        <li>
+          <span>4</span>
+          <div>
+            <strong>最后点“确认运行”</strong>
+            <p>第一轮建议：关键词“墨西哥海外仓”，数量 3，最高费用 $0.05。</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="workspace-grid">
+      <section class="control-panel">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">任务设置</p>
+            <h2>今天要研究什么</h2>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <label>
+            <span>关键词</span>
+            <input id="keyword" type="text" value="墨西哥海外仓" autocomplete="off">
+          </label>
+          <label>
+            <span>获取数量</span>
+            <input id="quantity" type="number" min="1" max="500" value="3">
+          </label>
+          <label>
+            <span>最大调用次数</span>
+            <input id="maxCalls" type="number" min="1" value="30">
+          </label>
+          <label>
+            <span>最高费用（美元）</span>
+            <input id="maxCost" type="number" min="0" step="0.01" value="0.30">
+          </label>
+        </div>
+
+        <div class="switch-row">
+          <label class="switch" aria-label="测试模式">
+            <input id="testMode" type="checkbox" checked>
+            <span></span>
+          </label>
+          <div>
+            <strong>测试模式</strong>
+            <p>默认最多 30 次调用。真实测试也建议先开着。</p>
+          </div>
+        </div>
+
+        <div class="task-grid" id="taskGrid">
+          <button class="task-button active" data-task="material" type="button"><span class="button-icon search-icon"></span>市场素材搜索</button>
+          <button class="task-button" data-task="competitor" type="button"><span class="button-icon user-icon"></span>竞品账号研究</button>
+          <button class="task-button" data-task="comments" type="button"><span class="button-icon chat-icon"></span>评论需求分析</button>
+          <button class="task-button" data-task="topic" type="button"><span class="button-icon trend-icon"></span>话题趋势研究</button>
+          <button class="task-button" data-task="product" type="button"><span class="button-icon product-icon"></span>商品与用户痛点研究</button>
+          <button class="task-button" data-task="images" type="button"><span class="button-icon image-icon"></span>图片补充搜索</button>
+          <button class="task-button" data-task="groups" type="button"><span class="button-icon group-icon"></span>群聊搜索</button>
+        </div>
+
+        <div class="action-row">
+          <button class="primary-button" id="estimateButton" type="button"><span class="button-icon calc-icon"></span>先估算费用</button>
+          <button class="confirm-button" id="runButton" type="button" disabled><span class="button-icon play-icon"></span>确认运行</button>
+        </div>
+      </section>
+
+      <aside class="status-panel">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">费用保护</p>
+            <h2>确认前先看清楚</h2>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div>
+            <span>预计调用</span>
+            <strong id="plannedCalls">-</strong>
+          </div>
+          <div>
+            <span>预计费用</span>
+            <strong id="plannedCost">-</strong>
+          </div>
+          <div>
+            <span>本次调用</span>
+            <strong id="actualCalls">-</strong>
+          </div>
+          <div>
+            <span>本次花费</span>
+            <strong id="actualCost">-</strong>
+          </div>
+        </div>
+        <div class="notice" id="keyStatus">正在检查 API Key...</div>
+        <div class="estimate-box" id="estimateBox"></div>
+        <div class="output-box" id="outputBox"></div>
+      </aside>
+    </section>
 
     <section class="log-panel">
       <div class="panel-title">
-        <h2>运行日志</h2>
+        <div>
+          <p class="eyebrow">过程记录</p>
+          <h2>运行日志</h2>
+        </div>
         <button class="small-button" id="pricesButton" type="button">查看当前单价</button>
       </div>
       <pre id="logBox">等待操作。</pre>
@@ -104,7 +171,10 @@
   <dialog id="settingsDialog">
     <form method="dialog" class="dialog-body">
       <div class="dialog-head">
-        <h2>API Key 设置</h2>
+        <div>
+          <p class="eyebrow">本机设置</p>
+          <h2>API Key 设置</h2>
+        </div>
         <button class="icon-button" value="cancel" type="submit" aria-label="关闭"></button>
       </div>
       <label>
@@ -120,8 +190,10 @@
       </label>
       <div class="dialog-actions">
         <button class="danger-button" id="clearKeyButton" type="button">清除 Key</button>
+        <button class="secondary-button" id="checkKeyButton" type="button">测试连接</button>
         <button class="primary-button" id="saveKeyButton" type="button">保存到本机</button>
       </div>
+      <div class="notice" id="connectionResult">填写后可以先测试连接。</div>
       <p class="local-path" id="configPath"></p>
     </form>
   </dialog>
@@ -129,4 +201,3 @@
   <script src="/static/app.js"></script>
 </body>
 </html>
-

@@ -49,8 +49,8 @@ function money(value) {
 function renderSettings(settings) {
   state.settings = settings;
   $("keyStatus").textContent = settings.hasApiKey
-    ? `已保存 API Key：${settings.apiKeyPreview}`
-    : "未填写 API Key：可以先用演示数据生成测试 Excel。";
+    ? `已保存 API Key：${settings.apiKeyPreview}。现在可以先估算费用，再确认真实运行。`
+    : "未填写 API Key：现在只能生成演示 Excel，不会真实调用 TikHub。";
   $("apiBase").value = settings.apiBase || "https://api.tikhub.io";
   $("configPath").textContent = `本机保存位置：${settings.configPath}`;
 }
@@ -154,6 +154,22 @@ async function clearKey() {
   }
 }
 
+async function checkConnection() {
+  const resultBox = $("connectionResult");
+  resultBox.textContent = "正在测试连接...";
+  try {
+    const data = await apiPost("/api/check-connection", {
+      apiKey: $("apiKey").value.trim(),
+      apiBase: $("apiBase").value,
+    });
+    resultBox.textContent = data.message || "连接成功。";
+    log("TikHub API Key 连接成功。");
+  } catch (err) {
+    resultBox.textContent = err.message || "连接失败，请检查 API Key。";
+    log(`TikHub API Key 连接失败：${err.message}`);
+  }
+}
+
 async function showPrices() {
   log("正在读取当前接口单价...");
   try {
@@ -182,9 +198,12 @@ function bindEvents() {
       $("runButton").disabled = true;
     });
   });
-  $("settingsButton").addEventListener("click", () => $("settingsDialog").showModal());
+  document.querySelectorAll("[data-open-settings]").forEach((button) => {
+    button.addEventListener("click", () => $("settingsDialog").showModal());
+  });
   $("saveKeyButton").addEventListener("click", saveKey);
   $("clearKeyButton").addEventListener("click", clearKey);
+  $("checkKeyButton").addEventListener("click", checkConnection);
   $("estimateButton").addEventListener("click", estimate);
   $("runButton").addEventListener("click", runTask);
   $("pricesButton").addEventListener("click", showPrices);
@@ -192,4 +211,3 @@ function bindEvents() {
 
 bindEvents();
 loadSettings();
-
