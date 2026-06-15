@@ -1,0 +1,12 @@
+# 本机密钥、缓存、原始数据和运行文件，不上传 GitHub
+YQN_XHS_Intel/data/config.json
+YQN_XHS_Intel/data/state.db
+YQN_XHS_Intel/data/state.db-*
+YQN_XHS_Intel/data/raw/*
+YQN_XHS_Intel/data/logs/*
+YQN_XHS_Intel/__pycache__/
+YQN_XHS_Intel/static/__pycache__/
+
+# macOS
+.DS_Store
+

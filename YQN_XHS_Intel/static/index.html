@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YQN 小红书市场情报助手</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="brand-mark">YQN</div>
+      <h1>小红书市场情报助手</h1>
+    </div>
+    <button class="ghost-button" id="settingsButton" type="button"><span class="button-icon key-icon"></span>设置 API Key</button>
+  </header>
+
+  <main class="layout">
+    <section class="control-panel">
+      <div class="field-grid">
+        <label>
+          <span>关键词</span>
+          <input id="keyword" type="text" value="墨西哥海外仓" autocomplete="off">
+        </label>
+        <label>
+          <span>获取数量</span>
+          <input id="quantity" type="number" min="1" max="500" value="3">
+        </label>
+        <label>
+          <span>最大调用次数</span>
+          <input id="maxCalls" type="number" min="1" value="30">
+        </label>
+        <label>
+          <span>最高费用（美元）</span>
+          <input id="maxCost" type="number" min="0" step="0.01" value="0.30">
+        </label>
+      </div>
+
+      <div class="switch-row">
+        <label class="switch">
+          <input id="testMode" type="checkbox" checked>
+          <span></span>
+        </label>
+        <div>
+          <strong>测试模式</strong>
+          <p>默认最多 30 次调用。</p>
+        </div>
+      </div>
+
+      <div class="task-grid" id="taskGrid">
+        <button class="task-button active" data-task="material" type="button"><span class="button-icon search-icon"></span>市场素材搜索</button>
+        <button class="task-button" data-task="competitor" type="button"><span class="button-icon user-icon"></span>竞品账号研究</button>
+        <button class="task-button" data-task="comments" type="button"><span class="button-icon chat-icon"></span>评论需求分析</button>
+        <button class="task-button" data-task="topic" type="button"><span class="button-icon trend-icon"></span>话题趋势研究</button>
+        <button class="task-button" data-task="product" type="button"><span class="button-icon product-icon"></span>商品与用户痛点研究</button>
+        <button class="task-button" data-task="images" type="button"><span class="button-icon image-icon"></span>图片补充搜索</button>
+        <button class="task-button" data-task="groups" type="button"><span class="button-icon group-icon"></span>群聊搜索</button>
+      </div>
+
+      <div class="action-row">
+        <button class="primary-button" id="estimateButton" type="button"><span class="button-icon calc-icon"></span>先估算费用</button>
+        <button class="confirm-button" id="runButton" type="button" disabled><span class="button-icon play-icon"></span>确认运行</button>
+      </div>
+    </section>
+
+    <aside class="status-panel">
+      <div class="stat-grid">
+        <div>
+          <span>预计调用</span>
+          <strong id="plannedCalls">-</strong>
+        </div>
+        <div>
+          <span>预计费用</span>
+          <strong id="plannedCost">-</strong>
+        </div>
+        <div>
+          <span>本次调用</span>
+          <strong id="actualCalls">-</strong>
+        </div>
+        <div>
+          <span>本次花费</span>
+          <strong id="actualCost">-</strong>
+        </div>
+      </div>
+      <div class="notice" id="keyStatus">正在检查 API Key...</div>
+      <div class="estimate-box" id="estimateBox"></div>
+      <div class="output-box" id="outputBox"></div>
+    </aside>
+
+    <section class="log-panel">
+      <div class="panel-title">
+        <h2>运行日志</h2>
+        <button class="small-button" id="pricesButton" type="button">查看当前单价</button>
+      </div>
+      <pre id="logBox">等待操作。</pre>
+    </section>
+  </main>
+
+  <footer>
+    <span>YQN 小红书市场情报助手</span>
+    <a href="mailto:zherong0603@gmail.com">zherong0603@gmail.com</a>
+  </footer>
+
+  <dialog id="settingsDialog">
+    <form method="dialog" class="dialog-body">
+      <div class="dialog-head">
+        <h2>API Key 设置</h2>
+        <button class="icon-button" value="cancel" type="submit" aria-label="关闭"></button>
+      </div>
+      <label>
+        <span>TikHub API Key</span>
+        <input id="apiKey" type="password" placeholder="粘贴你的 TikHub API Key">
+      </label>
+      <label>
+        <span>TikHub 接口域名</span>
+        <select id="apiBase">
+          <option value="https://api.tikhub.io">https://api.tikhub.io</option>
+          <option value="https://api.tikhub.dev">https://api.tikhub.dev</option>
+        </select>
+      </label>
+      <div class="dialog-actions">
+        <button class="danger-button" id="clearKeyButton" type="button">清除 Key</button>
+        <button class="primary-button" id="saveKeyButton" type="button">保存到本机</button>
+      </div>
+      <p class="local-path" id="configPath"></p>
+    </form>
+  </dialog>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
+
