@@ -67,8 +67,9 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
+  min-width: 58px;
   height: 44px;
+  padding: 0 10px;
   border: 1px solid rgba(117, 103, 255, 0.18);
   border-radius: 8px;
   background: #ffffff;
@@ -449,6 +450,33 @@ select:focus {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   margin-top: 14px;
+}
+
+.api-map-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.api-map-grid > div {
+  min-height: 126px;
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.api-map-grid strong {
+  display: block;
+  font-size: 16px;
+}
+
+.api-map-grid p {
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .concept-grid > div {
@@ -1026,7 +1054,8 @@ dialog::backdrop {
 
   .field-grid,
   .task-grid,
-  .concept-grid {
+  .concept-grid,
+  .api-map-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1090,6 +1119,7 @@ dialog::backdrop {
   .stat-grid,
   .step-list,
   .concept-grid,
+  .api-map-grid,
   .preview-grid {
     grid-template-columns: 1fr;
   }

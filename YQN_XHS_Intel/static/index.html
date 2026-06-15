@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>YQN 小红书市场情报助手</title>
+  <title>运去哪·小红书市场情报助手</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
   <nav class="global-nav">
     <div class="nav-inner">
       <div class="brand-lockup">
-        <span class="brand-mark">YQN</span>
-        <span>小红书市场情报助手</span>
+        <span class="brand-mark">运去哪</span>
+        <span>运去哪·小红书市场情报助手</span>
       </div>
       <div class="nav-links" aria-label="页面导航">
         <a href="#flow">流程</a>
@@ -25,17 +25,17 @@
   <main class="page-shell">
     <section class="hero-panel">
       <div class="hero-copy-block">
-        <p class="hero-badge"><span></span> Xiaohongshu App V2 · TikHub 朋友可用版</p>
-        <h1>小红书数据情报，为 YQN 市场判断而生。</h1>
-        <p class="hero-copy">你只填关键词、数量和预算。程序负责选接口、查单价、算费用、抓数据、去重、保存原始数据，最后给你 Excel。</p>
+        <p class="hero-badge"><span></span> Ryan 创作 · zherong0603@gmail.com</p>
+        <h1>小红书数据情报，为运去哪市场判断而生。</h1>
+        <p class="hero-copy">由 Ryan 设计给运去哪使用。你只填关键词、数量和预算，程序负责选接口、查单价、算费用、抓数据、去重、保存原始数据，最后给你 Excel。</p>
         <div class="hero-actions">
           <button class="hero-primary" data-open-settings type="button">填写 API Key <span>→</span></button>
           <a class="hero-secondary" href="#workbench">开始测试 <span>→</span></a>
         </div>
         <div class="hero-metrics" aria-label="能力概览">
-          <span>20 个 App V2 接口</span>
+          <span>自动关联 API</span>
           <span>先估费再运行</span>
-          <span>本地保存 Key</span>
+          <span>浏览器保存 Key</span>
           <span>Excel 自动导出</span>
         </div>
       </div>
@@ -112,6 +112,45 @@
           </div>
         </li>
       </ol>
+    </section>
+
+    <section class="connect-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">任务怎么自动关联 API</p>
+          <h2>你点的是业务任务，程序背后自动选接口</h2>
+        </div>
+      </div>
+      <div class="api-map-grid">
+        <div>
+          <strong>市场素材搜索</strong>
+          <p>先调用“搜索笔记”，再按结果自动调用“图文/视频笔记详情”。</p>
+        </div>
+        <div>
+          <strong>竞品账号研究</strong>
+          <p>自动调用“搜索用户 → 用户信息 → 用户发布笔记”。</p>
+        </div>
+        <div>
+          <strong>评论需求分析</strong>
+          <p>自动调用“搜索笔记 → 笔记评论”，后续再加二级评论。</p>
+        </div>
+        <div>
+          <strong>话题趋势研究</strong>
+          <p>先用“搜索笔记”找线索；如果结果里有话题 ID，再调用话题接口。</p>
+        </div>
+        <div>
+          <strong>商品与用户痛点研究</strong>
+          <p>自动调用“搜索商品 → 商品详情 → 商品评论”。</p>
+        </div>
+        <div>
+          <strong>图片 / 群聊搜索</strong>
+          <p>分别自动调用“搜索图片”和“搜索群聊”。</p>
+        </div>
+      </div>
+      <div class="plain-explain">
+        <strong>你截图里“分享链接为空”的原因</strong>
+        <p>不是你 API Key 的问题，也不是你任务点错了；是之前 Excel 只读取了一个链接字段。现在已经修成多字段查找，并且用笔记 ID 兜底生成链接。</p>
+      </div>
     </section>
 
     <section class="workspace-grid" id="workbench">
@@ -237,7 +276,7 @@
   </main>
 
   <footer>
-    <span>YQN 小红书市场情报助手</span>
+    <span>运去哪·小红书市场情报助手 · Created by Ryan</span>
     <a href="mailto:zherong0603@gmail.com">zherong0603@gmail.com</a>
   </footer>
 

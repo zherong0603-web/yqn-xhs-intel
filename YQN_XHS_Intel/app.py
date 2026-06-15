@@ -24,7 +24,7 @@ from typing import Any
 from xml.sax.saxutils import escape
 
 
-APP_NAME = "YQN 小红书市场情报助手"
+APP_NAME = "运去哪·小红书市场情报助手"
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 DATA_DIR = BASE_DIR / "data"
@@ -749,12 +749,81 @@ def first_value(obj: dict[str, Any], keys: list[str], default: Any = "") -> Any:
     return default
 
 
+def path_value(obj: Any, path: list[str | int], default: Any = "") -> Any:
+    current = obj
+    for part in path:
+        if isinstance(part, int):
+            if not isinstance(current, list) or part >= len(current):
+                return default
+            current = current[part]
+        else:
+            if not isinstance(current, dict) or part not in current:
+                return default
+            current = current[part]
+        if current in (None, ""):
+            return default
+    return current
+
+
 def deep_first_value(value: Any, keys: list[str], default: Any = "") -> Any:
     for item in walk_dicts(value):
         result = first_value(item, keys, None)
         if result not in (None, ""):
             return result
     return default
+
+
+def note_public_url(note_id: Any, xsec_token: Any = "") -> str:
+    note_id_text = str(note_id or "").strip()
+    if not note_id_text:
+        return ""
+    url = f"https://www.xiaohongshu.com/explore/{note_id_text}"
+    token_text = str(xsec_token or "").strip()
+    if token_text:
+        url += "?xsec_token=" + urllib.parse.quote(token_text)
+    return url
+
+
+def note_share_link(note: dict[str, Any], note_card: dict[str, Any]) -> str:
+    candidates = [
+        path_value(note, ["share_info", "link"]),
+        path_value(note_card, ["share_info", "link"]),
+        path_value(note, ["mini_program_info", "webpage_url"]),
+        path_value(note_card, ["mini_program_info", "webpage_url"]),
+        path_value(note, ["qq_mini_program_info", "webpage_url"]),
+        path_value(note_card, ["qq_mini_program_info", "webpage_url"]),
+        first_value(note, ["share_url", "shareUrl", "webpage_url"]),
+        first_value(note_card, ["share_url", "shareUrl", "webpage_url"]),
+    ]
+    for value in candidates:
+        text = str(value or "").strip()
+        if text.startswith(("http://", "https://")) and "xiaohongshu.com" in text:
+            return text
+    note_id = first_value(note, ["note_id", "noteId", "id"]) or first_value(note_card, ["note_id", "noteId", "id"])
+    xsec_token = first_value(note, ["xsec_token", "xsecToken"]) or first_value(note_card, ["xsec_token", "xsecToken"])
+    return note_public_url(note_id, xsec_token)
+
+
+def note_cover_image(note: dict[str, Any], note_card: dict[str, Any]) -> str:
+    candidates = [
+        first_value(note, ["cover", "image", "image_url"]),
+        first_value(note_card, ["cover", "image", "image_url"]),
+        path_value(note, ["cover", "url"]),
+        path_value(note_card, ["cover", "url"]),
+        path_value(note, ["images_list", 0, "url"]),
+        path_value(note_card, ["images_list", 0, "url"]),
+        path_value(note, ["images_list", 0, "url_size_large"]),
+        path_value(note_card, ["images_list", 0, "url_size_large"]),
+        path_value(note, ["share_info", "image"]),
+        path_value(note_card, ["share_info", "image"]),
+    ]
+    for value in candidates:
+        text = str(value or "").strip()
+        if text.startswith(("http://", "https://")):
+            return text
+        if text:
+            return text
+    return ""
 
 
 def compact_text(value: Any, limit: int = 240) -> str:
@@ -782,13 +851,29 @@ def unique_by(items: list[dict[str, Any]], keys: list[str]) -> list[dict[str, An
     return result
 
 
+def note_signal_score(item: dict[str, Any]) -> int:
+    score = 0
+    note_card = item.get("note_card")
+    if isinstance(note_card, dict):
+        score += 6
+    if first_value(item, ["title", "display_title", "desc"]):
+        score += 4
+    if any(isinstance(item.get(key), dict) for key in ["share_info", "mini_program_info", "qq_mini_program_info"]):
+        score += 4
+    if any(key in item for key in ["images_list", "cover", "liked_count", "collected_count", "comments_count", "comment_count"]):
+        score += 3
+    if isinstance(item.get("user"), dict):
+        score += 2
+    if first_value(item, ["type", "note_type", "model_type", "xsec_token"]):
+        score += 1
+    return score
+
+
 def extract_notes(payload: Any) -> list[dict[str, Any]]:
     candidates = []
     for item in walk_dicts(payload):
         note_id = first_value(item, ["note_id", "noteId", "id", "noteIdStr", "noteIdString"], "")
-        has_note_word = any(key in item for key in ["note_id", "note_card", "display_title", "cover", "liked_count"])
-        title = first_value(item, ["title", "display_title", "desc", "name"], "")
-        if note_id and (has_note_word or title):
+        if note_id and note_signal_score(item) >= 4:
             candidates.append(item)
     return unique_by(candidates, ["note_id", "noteId", "id"])[:200]
 
@@ -850,7 +935,7 @@ def note_row(task_name: str, keyword: str, note: dict[str, Any], source: str) ->
     title = first_value(note, ["title", "display_title"]) or first_value(note_card, ["title", "display_title"])
     desc = first_value(note, ["desc", "content", "text"]) or first_value(note_card, ["desc", "content"])
     note_type = first_value(note, ["type", "note_type", "model_type"]) or first_value(note_card, ["type", "note_type"])
-    cover = first_value(note, ["cover", "image", "image_url", "url"]) or first_value(note_card, ["cover", "image", "image_url"])
+    cover = note_cover_image(note, note_card)
     return {
         "任务": task_name,
         "关键词": keyword,
@@ -859,11 +944,11 @@ def note_row(task_name: str, keyword: str, note: dict[str, Any], source: str) ->
         "标题": compact_text(title, 160),
         "正文摘要": compact_text(desc, 260),
         "作者昵称": compact_text(first_value(note, ["nickname", "nick_name"]) or first_value(user, ["nickname", "nick_name", "name"]), 80),
-        "作者ID": first_value(note, ["user_id", "userId"]) or first_value(user, ["user_id", "userId", "id"]),
+        "作者ID": first_value(note, ["user_id", "userId", "userid"]) or first_value(user, ["user_id", "userId", "userid", "id"]),
         "点赞": first_value(note, ["liked_count", "like_count", "likes"]) or first_value(interact, ["liked_count", "like_count"]),
         "收藏": first_value(note, ["collected_count", "collect_count"]) or first_value(interact, ["collected_count", "collect_count"]),
         "评论": first_value(note, ["comment_count", "comments_count"]) or first_value(interact, ["comment_count", "comments_count"]),
-        "分享链接": first_value(note, ["share_url", "url", "link"]),
+        "分享链接": note_share_link(note, note_card),
         "图片或封面": compact_text(cover, 220),
         "发布时间": first_value(note, ["time", "create_time", "created_at", "timestamp"]) or first_value(note_card, ["time", "create_time"]),
         "数据来源": source,
@@ -874,7 +959,7 @@ def user_row(task_name: str, keyword: str, user: dict[str, Any], source: str) ->
     return {
         "任务": task_name,
         "关键词": keyword,
-        "用户ID": first_value(user, ["user_id", "userId", "id", "userid"]),
+        "用户ID": first_value(user, ["user_id", "userId", "userid", "id"]),
         "昵称": compact_text(first_value(user, ["nickname", "nick_name", "name", "user_name"]), 120),
         "简介": compact_text(first_value(user, ["desc", "description", "bio", "signature"]), 220),
         "粉丝": first_value(user, ["fans", "fans_count", "follower_count", "followers"]),
@@ -1001,7 +1086,7 @@ def run_task(payload: dict[str, Any]) -> dict[str, Any]:
             messages.append(f"运行中遇到错误，已保存已拿到的数据：{exc}")
 
     workbook["API调用与费用记录"] = call_log_rows(run_id)
-    output_path = OUTPUT_DIR / f"YQN_小红书市场情报_{keyword}_{run_id}.xlsx"
+    output_path = OUTPUT_DIR / f"运去哪_小红书市场情报_{keyword}_{run_id}.xlsx"
     write_xlsx(output_path, workbook)
     return {
         "ok": True,
