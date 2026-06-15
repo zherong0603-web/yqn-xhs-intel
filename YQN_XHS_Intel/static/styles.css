@@ -337,6 +337,38 @@ h2 {
   margin-bottom: 18px;
 }
 
+.friend-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(241, 239, 255, 0.88));
+}
+
+.friend-quick-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.friend-quick-list > div {
+  min-height: 116px;
+  padding: 17px;
+  border: 1px solid rgba(116, 103, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.friend-quick-list strong {
+  display: block;
+  font-size: 16px;
+}
+
+.friend-quick-list p {
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
 .section-head,
 .panel-title {
   display: flex;
@@ -1045,6 +1077,10 @@ dialog::backdrop {
   .step-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .friend-quick-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 860px) {
@@ -1055,7 +1091,8 @@ dialog::backdrop {
   .field-grid,
   .task-grid,
   .concept-grid,
-  .api-map-grid {
+  .api-map-grid,
+  .friend-quick-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1120,6 +1157,7 @@ dialog::backdrop {
   .step-list,
   .concept-grid,
   .api-map-grid,
+  .friend-quick-list,
   .preview-grid {
     grid-template-columns: 1fr;
   }
