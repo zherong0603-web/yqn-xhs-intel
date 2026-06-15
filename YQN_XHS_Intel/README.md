@@ -6,13 +6,15 @@
 
 - GitHub 仓库：https://github.com/zherong0603-web/yqn-xhs-intel
 - GitHub Pages 展示版：https://zherong0603-web.github.io/yqn-xhs-intel/
+- Render 真实 API 版：https://yqn-xhs-intel.onrender.com/
 - Render 真实 API 版一键部署：https://render.com/deploy?repo=https://github.com/zherong0603-web/yqn-xhs-intel
 
 说明：
 
 - GitHub Pages 展示版免费、稳定，适合给朋友或老板看效果。
 - GitHub Pages 不能运行 Python 后端，所以不能真实调用 TikHub。
-- 真实 API、费用保护、Excel 实时生成，需要部署 Render 版。
+- 真实 API、费用保护、Excel 实时生成，请打开 Render 真实 API 版。
+- Render 免费档会休眠，第一次打开可能要等 50 秒左右。
 
 ## 打开方法
 
