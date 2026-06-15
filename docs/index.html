@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>运去哪·小红书市场情报助手</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17171a;
+      --muted: #737684;
+      --line: rgba(120, 123, 145, 0.2);
+      --violet: #6557ff;
+      --violet-soft: #f0edff;
+      --paper: #f7f6ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #f4f2ff 0%, #fbfbff 44%, #f7f8fb 100%);
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      border-bottom: 1px solid rgba(210, 210, 226, 0.6);
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(22px);
+    }
+
+    .nav-inner,
+    main,
+    footer {
+      width: min(1180px, calc(100vw - 36px));
+      margin: 0 auto;
+    }
+
+    .nav-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .brand-mark {
+      min-width: 58px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      border: 1px solid rgba(117, 103, 255, 0.18);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--violet);
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 0 12px 28px rgba(64, 54, 130, 0.1);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .nav a {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 850;
+    }
+
+    .hero {
+      min-height: 620px;
+      padding: 86px 0 46px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+      align-items: center;
+      gap: 48px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 42px;
+      padding: 0 18px;
+      margin-bottom: 22px;
+      border: 1px solid rgba(117, 103, 255, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--violet);
+      font-size: 14px;
+      font-weight: 850;
+      box-shadow: 0 10px 30px rgba(84, 76, 180, 0.08);
+    }
+
+    .badge span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--violet);
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      font-size: 64px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 27px;
+      line-height: 1.18;
+      font-weight: 850;
+    }
+
+    .copy {
+      max-width: 710px;
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.55;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .primary,
+    .secondary {
+      min-height: 58px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 28px;
+      border-radius: 999px;
+      font-size: 17px;
+      font-weight: 850;
+    }
+
+    .primary {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .secondary {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 12px 36px rgba(54, 49, 110, 0.08);
+    }
+
+    .preview,
+    .panel {
+      border: 1px solid rgba(117, 103, 255, 0.16);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 20px 60px rgba(54, 49, 110, 0.12);
+    }
+
+    .preview {
+      min-height: 430px;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .dots {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #d7d4f7;
+    }
+
+    .preview-card {
+      margin-top: 14px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+    }
+
+    .preview-card.dark {
+      background: #17171a;
+      color: #fff;
+    }
+
+    .preview-card small,
+    .stat small {
+      display: block;
+      margin-bottom: 8px;
+      color: #9ca0ad;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .preview-card strong {
+      display: block;
+      font-size: 26px;
+    }
+
+    .stat-grid,
+    .quick-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stat-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 14px;
+    }
+
+    .stat {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+    }
+
+    .stat strong {
+      font-size: 38px;
+    }
+
+    .panel {
+      padding: 26px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      margin-bottom: 9px;
+      color: var(--violet);
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .quick-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 22px;
+    }
+
+    .quick-grid > div {
+      min-height: 126px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .quick-grid strong {
+      display: block;
+      font-size: 16px;
+    }
+
+    .quick-grid p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 15px;
+      border: 1px solid rgba(116, 103, 255, 0.16);
+      border-radius: 8px;
+      background: var(--violet-soft);
+      color: #5548e8;
+      font-weight: 750;
+      line-height: 1.55;
+    }
+
+    footer {
+      margin: 24px auto 30px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    footer a {
+      color: var(--violet);
+      font-weight: 850;
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding-top: 58px;
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .nav-inner,
+      main,
+      footer {
+        width: calc(100vw - 24px);
+      }
+
+      .brand span:last-child {
+        display: none;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+
+      .copy {
+        font-size: 17px;
+      }
+
+      .quick-grid,
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions,
+      footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .primary,
+      .secondary {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <span class="brand-mark">运去哪</span>
+        <span>运去哪·小红书市场情报助手</span>
+      </div>
+      <a href="https://render.com/deploy?repo=https://github.com/zherong0603-web/yqn-xhs-intel">部署真实 API 版</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="badge"><span></span> Ryan 创作 · zherong0603@gmail.com</p>
+        <h1>小红书市场情报，先给老板看得懂。</h1>
+        <p class="copy">这是稳定免费的 GitHub Pages 展示版。朋友打开就能看产品效果、费用保护逻辑和 Excel 样例；真实采集版请用 Render 部署按钮。</p>
+        <div class="actions">
+          <a class="primary" href="assets/运去哪_小红书市场情报_墨西哥海外仓_演示.xlsx">下载演示 Excel</a>
+          <a class="secondary" href="https://github.com/zherong0603-web/yqn-xhs-intel">查看 GitHub 仓库</a>
+        </div>
+      </div>
+
+      <div class="preview" aria-label="演示预览">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="preview-card dark">
+          <small>当前任务</small>
+          <strong>市场素材搜索</strong>
+          <p>关键词：墨西哥海外仓</p>
+        </div>
+        <div class="stat-grid">
+          <div class="stat">
+            <small>预计真实调用</small>
+            <strong>4</strong>
+          </div>
+          <div class="stat">
+            <small>预计费用</small>
+            <strong>$0.04</strong>
+          </div>
+        </div>
+        <div class="preview-card">
+          <small>安全规则</small>
+          <p>先估算费用，再确认运行；默认测试模式最多 30 次调用。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">朋友怎么用</p>
+      <h2>展示版不需要 API Key，不会扣费</h2>
+      <div class="quick-grid">
+        <div>
+          <strong>1. 打开这个网址</strong>
+          <p>这是固定展示页，不依赖你电脑开机。</p>
+        </div>
+        <div>
+          <strong>2. 看任务流程</strong>
+          <p>关键词、数量、最多调用、最多花费都用中文解释。</p>
+        </div>
+        <div>
+          <strong>3. 下载 Excel</strong>
+          <p>点“下载演示 Excel”，看最终表格长什么样。</p>
+        </div>
+        <div>
+          <strong>4. 真实部署</strong>
+          <p>点“部署真实 API 版”，去 Render 创建长期后端服务。</p>
+        </div>
+      </div>
+      <div class="note">展示版只负责给老板看效果。真实 API 采集、填写 TikHub Key、自动导出新 Excel，需要部署 Render 版。</div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">真实 API 版</p>
+      <h2>推荐用 Render 免费 Web Service</h2>
+      <div class="quick-grid">
+        <div>
+          <strong>稳定</strong>
+          <p>会得到一个 Render 固定网址，不会像临时通道那样断。</p>
+        </div>
+        <div>
+          <strong>省钱</strong>
+          <p>早期 demo 可用免费档。免费档可能会休眠，第一次打开会慢一点。</p>
+        </div>
+        <div>
+          <strong>能跑后端</strong>
+          <p>Python 服务、TikHub API、Excel 下载都需要后端。</p>
+        </div>
+        <div>
+          <strong>安全</strong>
+          <p>API Key 只保存在使用者浏览器，不写进 GitHub。</p>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="primary" href="https://render.com/deploy?repo=https://github.com/zherong0603-web/yqn-xhs-intel">一键部署到 Render</a>
+        <a class="secondary" href="朋友分享与简单使用说明.md">查看朋友说明</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>运去哪·小红书市场情报助手 · Created by Ryan</span>
+    <a href="mailto:zherong0603@gmail.com">zherong0603@gmail.com</a>
+  </footer>
+</body>
+</html>
