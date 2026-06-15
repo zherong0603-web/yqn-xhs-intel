@@ -4,6 +4,11 @@ const state = {
   settings: null,
 };
 
+const STORAGE_KEYS = {
+  apiKey: "yqn_tikhub_api_key",
+  apiBase: "yqn_tikhub_api_base",
+};
+
 const $ = (id) => document.getElementById(id);
 
 function log(message) {
@@ -30,16 +35,34 @@ async function apiPost(url, payload) {
   return data;
 }
 
-function payload() {
-  return {
+function storedApiKey() {
+  return localStorage.getItem(STORAGE_KEYS.apiKey) || "";
+}
+
+function storedApiBase() {
+  return localStorage.getItem(STORAGE_KEYS.apiBase) || "https://api.tikhub.io";
+}
+
+function apiKeyPreview(apiKey) {
+  if (!apiKey) return "";
+  if (apiKey.length <= 8) return "*".repeat(apiKey.length);
+  return `${apiKey.slice(0, 4)}${"*".repeat(Math.max(4, apiKey.length - 8))}${apiKey.slice(-4)}`;
+}
+
+function payload(options = {}) {
+  const data = {
     task: state.task,
     keyword: $("keyword").value.trim() || "墨西哥海外仓",
     quantity: Number($("quantity").value || 3),
     maxCalls: Number($("maxCalls").value || 30),
     maxCost: Number($("maxCost").value || 0.05),
     testMode: $("testMode").checked,
-    apiBase: $("apiBase").value || "https://api.tikhub.io",
+    apiBase: $("apiBase").value || storedApiBase(),
   };
+  if (options.includeApiKey) {
+    data.apiKey = storedApiKey();
+  }
+  return data;
 }
 
 function money(value) {
@@ -47,12 +70,22 @@ function money(value) {
 }
 
 function renderSettings(settings) {
-  state.settings = settings;
-  $("keyStatus").textContent = settings.hasApiKey
-    ? `已保存 API Key：${settings.apiKeyPreview}。现在可以先估算费用，再确认真实运行。`
+  const localKey = storedApiKey();
+  const localBase = storedApiBase();
+  state.settings = {
+    ...settings,
+    hasApiKey: Boolean(localKey),
+    apiKeyPreview: apiKeyPreview(localKey),
+    apiBase: localBase,
+  };
+  $("keyStatus").textContent = localKey
+    ? `当前浏览器已保存 API Key：${apiKeyPreview(localKey)}。现在可以先估算费用，再确认真实运行。`
     : "未填写 API Key：现在只能生成演示 Excel，不会真实调用 TikHub。";
-  $("apiBase").value = settings.apiBase || "https://api.tikhub.io";
-  $("configPath").textContent = `本机保存位置：${settings.configPath}`;
+  $("apiBase").value = localBase;
+  $("connectionResult").textContent = localKey
+    ? `当前浏览器已保存：${apiKeyPreview(localKey)}`
+    : "填写后可以先测试连接。";
+  $("configPath").textContent = "朋友模式：API Key 只保存在当前浏览器，不写入服务器文件。";
 }
 
 function renderEstimate(estimate) {
@@ -106,7 +139,7 @@ async function runTask() {
   $("outputBox").innerHTML = "";
   log("已确认运行，开始处理...");
   try {
-    const data = await apiPost("/api/run", payload());
+    const data = await apiPost("/api/run", payload({ includeApiKey: true }));
     $("actualCalls").textContent = data.paidCalls;
     $("actualCost").textContent = money(data.spent);
     const notes = data.messages.length ? data.messages.map((item) => `<div>${item}</div>`).join("") : "<div>运行完成。</div>";
@@ -128,14 +161,14 @@ async function runTask() {
 
 async function saveKey() {
   try {
-    const data = await apiPost("/api/settings", {
-      apiKey: $("apiKey").value.trim(),
-      apiBase: $("apiBase").value,
-    });
-    renderSettings(data);
+    const key = $("apiKey").value.trim() || storedApiKey();
+    if (!key) throw new Error("请先粘贴 TikHub API Key。");
+    localStorage.setItem(STORAGE_KEYS.apiKey, key);
+    localStorage.setItem(STORAGE_KEYS.apiBase, $("apiBase").value || "https://api.tikhub.io");
+    renderSettings({ apiBase: storedApiBase() });
     $("apiKey").value = "";
     $("settingsDialog").close();
-    log("API Key 已保存到本机。");
+    log("API Key 已保存到当前浏览器。");
   } catch (err) {
     log(`保存失败：${err.message}`);
   }
@@ -143,12 +176,11 @@ async function saveKey() {
 
 async function clearKey() {
   try {
-    const data = await apiPost("/api/settings", {
-      clear: true,
-      apiBase: $("apiBase").value,
-    });
-    renderSettings(data);
+    localStorage.removeItem(STORAGE_KEYS.apiKey);
+    localStorage.setItem(STORAGE_KEYS.apiBase, $("apiBase").value || "https://api.tikhub.io");
+    renderSettings({ apiBase: storedApiBase() });
     $("apiKey").value = "";
+    $("connectionResult").textContent = "API Key 已从当前浏览器清除。";
     log("API Key 已清除。");
   } catch (err) {
     log(`清除失败：${err.message}`);
@@ -160,7 +192,7 @@ async function checkConnection() {
   resultBox.textContent = "正在测试连接...";
   try {
     const data = await apiPost("/api/check-connection", {
-      apiKey: $("apiKey").value.trim(),
+      apiKey: $("apiKey").value.trim() || storedApiKey(),
       apiBase: $("apiBase").value,
     });
     resultBox.textContent = data.message || "连接成功。";

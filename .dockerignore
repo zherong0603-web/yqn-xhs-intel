@@ -1,0 +1,11 @@
+.git
+.DS_Store
+OPC_Workbench
+YQN_XHS_Intel/__pycache__
+YQN_XHS_Intel/data/config.json
+YQN_XHS_Intel/data/state.db
+YQN_XHS_Intel/data/state.db-*
+YQN_XHS_Intel/data/raw/*
+YQN_XHS_Intel/data/logs/*
+YQN_XHS_Intel/outputs/*.xlsx
+

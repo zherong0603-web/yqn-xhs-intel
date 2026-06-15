@@ -12,10 +12,11 @@
 
 ## 本地保存
 
-- API Key：`YQN_XHS_Intel/data/config.json`
+- API Key：当前浏览器 localStorage
 - 原始数据：`YQN_XHS_Intel/data/raw/`
 - Excel：`YQN_XHS_Intel/outputs/`
 - 缓存数据库：`YQN_XHS_Intel/data/state.db`
 
 这些运行数据默认不上传 GitHub。
 
+朋友模式下，服务器不保存 API Key。每个使用者都在自己的浏览器里保存自己的 Key。

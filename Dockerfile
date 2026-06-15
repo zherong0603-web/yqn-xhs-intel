@@ -1,0 +1,15 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV HOST=0.0.0.0
+ENV PORT=10000
+
+WORKDIR /app
+
+COPY YQN_XHS_Intel ./YQN_XHS_Intel
+
+EXPOSE 10000
+
+CMD ["python", "YQN_XHS_Intel/app.py", "--no-browser"]
+

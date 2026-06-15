@@ -368,7 +368,7 @@ def load_config() -> dict[str, Any]:
     except json.JSONDecodeError:
         return {"api_key": "", "api_base": DEFAULT_API_BASE}
     return {
-        "api_key": data.get("api_key", ""),
+        "api_key": "",
         "api_base": data.get("api_base", DEFAULT_API_BASE) or DEFAULT_API_BASE,
     }
 
@@ -378,7 +378,7 @@ def save_config(api_key: str, api_base: str) -> None:
     CONFIG_PATH.write_text(
         json.dumps(
             {
-                "api_key": api_key.strip(),
+                "api_key": "",
                 "api_base": api_base.strip() or DEFAULT_API_BASE,
                 "saved_at": now_text(),
             },
@@ -543,8 +543,8 @@ def estimate_task(payload: dict[str, Any]) -> dict[str, Any]:
         "steps": steps,
         "prices": prices,
         "priceMessage": price_message,
-        "hasApiKey": bool(config.get("api_key")),
-        "apiKeyPreview": api_key_preview(config.get("api_key", "")),
+        "hasApiKey": bool(str(payload.get("apiKey") or "").strip()),
+        "apiKeyPreview": api_key_preview(str(payload.get("apiKey") or "").strip()),
         "apiBase": api_base,
     }
 
@@ -962,6 +962,7 @@ def run_task(payload: dict[str, Any]) -> dict[str, Any]:
     init_db()
     estimate = estimate_task(payload)
     config = load_config()
+    config["api_key"] = str(payload.get("apiKey") or "").strip()
     config["api_base"] = payload.get("apiBase") or config.get("api_base") or DEFAULT_API_BASE
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
     keyword = str(payload.get("keyword") or "墨西哥海外仓").strip() or "墨西哥海外仓"
@@ -1614,10 +1615,10 @@ class YqnHandler(BaseHTTPRequestHandler):
             json_response(
                 self,
                 {
-                    "hasApiKey": bool(config.get("api_key")),
-                    "apiKeyPreview": api_key_preview(config.get("api_key", "")),
+                    "hasApiKey": False,
+                    "apiKeyPreview": "",
                     "apiBase": config.get("api_base") or DEFAULT_API_BASE,
-                    "configPath": str(CONFIG_PATH),
+                    "configPath": "朋友模式：服务器不保存 API Key",
                 },
             )
             return
@@ -1652,12 +1653,8 @@ class YqnHandler(BaseHTTPRequestHandler):
         try:
             payload = read_json(self)
             if path == "/api/settings":
-                api_key = str(payload.get("apiKey", "")).strip()
                 api_base = str(payload.get("apiBase", DEFAULT_API_BASE)).strip() or DEFAULT_API_BASE
-                if payload.get("clear"):
-                    save_config("", api_base)
-                else:
-                    save_config(api_key, api_base)
+                save_config("", api_base)
                 config = load_config()
                 json_response(
                     self,
@@ -1670,9 +1667,8 @@ class YqnHandler(BaseHTTPRequestHandler):
                 )
                 return
             if path == "/api/check-connection":
-                config = load_config()
-                api_key = str(payload.get("apiKey") or config.get("api_key", "")).strip()
-                api_base = str(payload.get("apiBase") or config.get("api_base") or DEFAULT_API_BASE).strip()
+                api_key = str(payload.get("apiKey") or "").strip()
+                api_base = str(payload.get("apiBase") or DEFAULT_API_BASE).strip()
                 result = check_tikhub_connection(api_key, api_base)
                 json_response(self, result, 200 if result.get("ok") else 400)
                 return
@@ -1700,11 +1696,15 @@ def find_free_port(start: int = 8765) -> int:
 
 def main() -> None:
     init_db()
-    port = find_free_port(8765)
-    server = ThreadingHTTPServer(("127.0.0.1", port), YqnHandler)
-    url = f"http://127.0.0.1:{port}"
+    host = os.environ.get("HOST", "127.0.0.1")
+    port = safe_int(os.environ.get("PORT"), 8765, 1, 65535)
+    if host == "127.0.0.1" and "PORT" not in os.environ:
+        port = find_free_port(8765)
+    server = ThreadingHTTPServer((host, port), YqnHandler)
+    display_host = "127.0.0.1" if host == "0.0.0.0" else host
+    url = f"http://{display_host}:{port}"
     print(f"{APP_NAME} 已启动：{url}")
-    if "--no-browser" not in sys.argv:
+    if "--no-browser" not in sys.argv and host != "0.0.0.0":
         threading.Timer(0.8, lambda: webbrowser.open(url)).start()
     try:
         server.serve_forever()
